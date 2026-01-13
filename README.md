@@ -64,6 +64,8 @@ src/
 ├── assets/                     # Video, audio, and image files
 └── types/
     └── assets.d.ts            # TypeScript asset declarations
+public/
+└── ios/                        # HEVC alpha videos for iOS (manual add)
 ```
 
 ## API Integration
@@ -100,12 +102,31 @@ Character animations are WebM videos with transparency:
 - `impressed.webm` - Positive verdict animation
 - `disappointed.webm` - Negative verdict animation
 
+### iOS HEVC Alpha (Smoothest iPhone Playback)
+
+iOS ignores VP9 alpha in WebM, so provide HEVC-with-alpha `.mov` files in `public/ios/`:
+
+- `idle.hevc.mov`
+- `listening.hevc.mov`
+- `impressed.hevc.mov`
+- `disappointed.hevc.mov`
+
+If these files are missing or unsupported, the app falls back to WebM with a canvas chroma-key.
+
 ### Converting Assets
 
 Use ffmpeg to convert GIFs or videos to WebM:
 
 ```bash
 ffmpeg -i input.gif -c:v libvpx-vp9 -pix_fmt yuva420p -b:v 0 -crf 30 output.webm
+```
+
+Example HEVC-alpha command (macOS with VideoToolbox support):
+
+```bash
+ffmpeg -i input.webm -vf "colorkey=0xFFFFFF:0.02:0.0,format=bgra" \
+  -c:v hevc_videotoolbox -alpha_quality 1 -tag:v hvc1 \
+  public/ios/input.hevc.mov
 ```
 
 ## License
