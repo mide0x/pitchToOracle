@@ -65,12 +65,12 @@ export const VisionPage = () => {
   };
 
   return (
-    <div className="w-full min-h-[100dvh] bg-black flex items-center justify-center overflow-hidden">
+    <div className="fixed inset-0 w-full h-full bg-black flex items-center justify-center overflow-hidden">
       {/* Desktop Background */}
       <div className="absolute inset-0 z-0 opacity-50 bg-[radial-gradient(circle_at_center,_#2a1f4e_0%,_#000000_100%)] blur-3xl scale-125 pointer-events-none" />
 
       {/* Mobile Container / Card on Web */}
-      <main className="relative w-full md:max-w-[480px] h-[100dvh] md:h-auto md:aspect-[9/19] md:max-h-[90vh] flex flex-col items-center overflow-hidden font-serif selection:bg-purple-900 selection:text-white shadow-2xl bg-[#020204] md:rounded-[40px] md:border md:border-white/5 transition-all duration-300">
+      <main className="relative w-full md:max-w-[480px] h-full md:h-auto md:aspect-[9/19] md:max-h-[90vh] flex flex-col items-center overflow-hidden font-serif selection:bg-purple-900 selection:text-white shadow-2xl bg-[#020204] md:rounded-[40px] md:border md:border-white/5 transition-all duration-300">
         <BackgroundLayer />
         <ParticleLayer />
 

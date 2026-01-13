@@ -50,7 +50,7 @@ export const BackgroundLayer = () => {
   }, []);
 
   return (
-    <div className="fixed inset-0 overflow-hidden pointer-events-none z-0 bg-[#020204]">
+    <div className="absolute inset-0 overflow-hidden pointer-events-none z-0 bg-[#020204]">
       {/* Deep Base Background */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_120%,_#1a0b2e_0%,_#000000_100%)] opacity-80" />
 
