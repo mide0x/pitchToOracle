@@ -1,0 +1,211 @@
+import { useState } from "react";
+import { BackgroundLayer } from "./BackgroundLayer";
+import { motion, AnimatePresence } from "framer-motion";
+import { ParticleLayer } from "./ParticleLayer";
+import { CharacterLayer } from "./CharacterLayer";
+import { VerdictPopup } from "./VerdictPopup";
+import { useAudioRecorder } from "../hooks/useAudioRecorder";
+
+type Status = "idle" | "listening" | "processing" | "result";
+
+interface VerdictData {
+  category: "VISIONARY" | "DELUSIONAL";
+  feedback: string;
+}
+
+export const VisionPage = () => {
+  const [status, setStatus] = useState<Status>("idle");
+  const [verdict, setVerdict] = useState<VerdictData | null>(null);
+  const [showResultPopup, setShowResultPopup] = useState(false);
+  const { startRecording, stopRecording } = useAudioRecorder();
+
+  const handleStartInteraction = async () => {
+    if (status !== "idle" && status !== "result") return;
+
+    setStatus("listening");
+    await startRecording();
+  };
+
+  const handleEndInteraction = async () => {
+    if (status !== "listening") return;
+
+    setStatus("processing");
+    const audioBlob = await stopRecording();
+
+    console.log("Audio recorded:", {
+      size: audioBlob.size,
+      type: audioBlob.type,
+    });
+
+    const result = await getVerdict(audioBlob);
+
+    // Determine category based on message content
+    const isVisionary = result.message.toLowerCase().includes("visionary") &&
+                        !result.message.toLowerCase().includes("not a visionary");
+
+    setVerdict({
+      category: isVisionary ? "VISIONARY" : "DELUSIONAL",
+      feedback: result.message,
+    });
+    setStatus("result");
+  };
+
+  const handleVideoEnd = () => {
+    // Video ended, keep showing result until user dismisses popup
+  };
+
+  const handleShowVerdict = () => {
+    setShowResultPopup(true);
+  };
+
+  const resetFlow = () => {
+    setStatus("idle");
+    setVerdict(null);
+    setShowResultPopup(false);
+  };
+
+  return (
+    <div className="w-full min-h-[100dvh] bg-black flex items-center justify-center overflow-hidden">
+      {/* Desktop Background */}
+      <div className="absolute inset-0 z-0 opacity-50 bg-[radial-gradient(circle_at_center,_#2a1f4e_0%,_#000000_100%)] blur-3xl scale-125 pointer-events-none" />
+
+      {/* Mobile Container / Card on Web */}
+      <main className="relative w-full md:max-w-[480px] h-[100dvh] md:h-auto md:aspect-[9/19] md:max-h-[90vh] flex flex-col items-center overflow-hidden font-serif selection:bg-purple-900 selection:text-white shadow-2xl bg-[#020204] md:rounded-[40px] md:border md:border-white/5 transition-all duration-300">
+        <BackgroundLayer />
+        <ParticleLayer />
+
+        {/* Vignette Overlay */}
+        <motion.div
+          className="absolute inset-0 z-10 pointer-events-none shadow-[inset_0_0_100px_rgba(0,0,0,0.9),_inset_0_0_30px_rgba(42,31,78,0.5)] mix-blend-multiply"
+          animate={{
+            boxShadow: [
+              "inset 0 0 100px rgba(0,0,0,0.9), inset 0 0 30px rgba(42,31,78,0.5)",
+              "inset 0 0 150px rgba(0,0,0,0.95), inset 0 0 60px rgba(42,31,78,0.7)",
+              "inset 0 0 100px rgba(0,0,0,0.9), inset 0 0 30px rgba(42,31,78,0.5)",
+            ],
+          }}
+          transition={{
+            duration: 8,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+        <div className="absolute inset-0 z-10 pointer-events-none shadow-[inset_0_0_20px_2px_rgba(212,175,55,0.1)] rounded-[inherit]" />
+
+        {/* Character Layer */}
+        <motion.div
+          className="absolute inset-0 z-10 flex items-center justify-center"
+          // Only allow start on character tap if idle or result
+          onClick={() => {
+            if (status === "idle") handleStartInteraction();
+          }}
+          whileTap={status === "idle" ? { scale: 0.98 } : {}}
+        >
+          <CharacterLayer
+            status={status}
+            verdict={verdict?.category}
+            onVideoEnd={handleVideoEnd}
+            onShowVerdict={handleShowVerdict}
+          />
+        </motion.div>
+
+        {/* Content Layer */}
+        <div className="relative z-20 w-full h-full flex flex-col items-center py-8 px-6 safe-area-inset-bottom pointer-events-none">
+          {/* Header Text - Hidden during interaction */}
+          <AnimatePresence>
+            {status === "idle" && (
+              <header className="absolute top-12 left-0 w-full text-center z-20">
+                <motion.div
+                  initial={{ opacity: 0, y: -20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <h1 className="text-4xl md:text-5xl font-serif font-medium leading-[1.15] text-cream tracking-wide drop-shadow-2xl">
+                    Speak your vision
+                    <br />
+                    <span className="italic block mt-1">into existence</span>
+                  </h1>
+                </motion.div>
+              </header>
+            )}
+          </AnimatePresence>
+
+          {/* Interaction Controls */}
+          <AnimatePresence>
+            {status === "listening" && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 10 }}
+                className="absolute top-[15%] z-30 flex flex-col items-center gap-4 pointer-events-auto"
+              >
+                <p className="text-white/80 font-serif italic tracking-wide animate-pulse">
+                  Listening...
+                </p>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleEndInteraction();
+                  }}
+                  className="px-6 py-2 rounded-full border border-white/20 bg-white/10 backdrop-blur-md text-white font-medium hover:bg-white/20 transition-all active:scale-95"
+                >
+                  Done Speaking
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          <VerdictPopup
+            isVisible={showResultPopup}
+            category={verdict?.category || "DELUSIONAL"}
+            feedback={verdict?.feedback || ""}
+            onClose={resetFlow}
+          />
+        </div>
+      </main>
+    </div>
+  );
+};
+
+// API Call to backend
+async function getVerdict(audioBlob: Blob) {
+  try {
+    // Check if audio is below 10MB
+    const maxSize = 10 * 1024 * 1024;
+    if (audioBlob.size > maxSize) {
+      console.error("Audio file is too large:", audioBlob.size, "bytes");
+      throw new Error("Audio file must be below 10MB");
+    }
+
+    console.log("Sending audio to backend, size:", audioBlob.size, "bytes");
+
+    const response = await fetch("https://is-api-jywq.onrender.com/api/idea/audio", {
+      method: "POST",
+      body: audioBlob,
+      headers: {
+        "Content-Type": "audio/webm",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status} ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    console.log("Backend response:", data);
+
+    return data;
+  } catch (error) {
+    console.error("Error calling verdict API:", error);
+    // Fallback to mock response on error
+    const isImpressed = Math.random() > 0.5;
+    return {
+      impressed: isImpressed,
+      category: isImpressed ? "VISIONARY" : "DELUSIONAL",
+      feedback: isImpressed
+        ? "This could actually work. The oracle is intrigued."
+        : "The oracle has seen a thousand of these fail.",
+    };
+  }
+}
