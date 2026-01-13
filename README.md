@@ -1,73 +1,113 @@
-# React + TypeScript + Vite
+# Oracle Vision App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+An interactive web application where users pitch their ideas through audio recording and receive an animated verdict (VISIONARY or DELUSIONAL) from an Oracle character.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Audio Recording**: Capture user pitches using browser microphone
+- **Animated Character**: WebM video animations that respond to user interaction
+- **State Machine Flow**: Smooth transitions through idle, listening, processing, and result states
+- **Mystical UI**: Particle effects and gradient backgrounds for an immersive experience
+- **Verdict Display**: Scroll-based popup revealing the Oracle's judgment with synchronized audio
 
-## React Compiler
+## Tech Stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **React 18** with TypeScript
+- **Vite** for fast development and optimized builds
+- **TailwindCSS 4.x** for styling
+- **Framer Motion** for animations
+- **tsParticles** for particle effects
+- **WebM video** with Audio API for character animations
 
-## Expanding the ESLint configuration
+## Getting Started
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Prerequisites
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+- Node.js (v16 or higher)
+- npm or yarn
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### Installation
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+The app will be available at `http://localhost:5173`
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Build for Production
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+# Create optimized production build
+npm run build
+
+# Preview production build
+npm run preview
 ```
+
+## Project Structure
+
+```
+src/
+├── components/
+│   ├── VisionPage.tsx         # Main state machine controller
+│   ├── CharacterLayer.tsx     # Video animation manager
+│   ├── BackgroundLayer.tsx    # Gradient background
+│   ├── ParticleLayer.tsx      # Particle effects
+│   ├── VerdictPopup.tsx       # Result scroll display
+│   └── VerdictOverlay.tsx     # Verdict overlay component
+├── hooks/
+│   └── useAudioRecorder.ts    # Audio recording hook
+├── assets/                     # Video, audio, and image files
+└── types/
+    └── assets.d.ts            # TypeScript asset declarations
+```
+
+## API Integration
+
+The app connects to a backend API for idea analysis:
+
+**Endpoint**: `https://is-api-jywq.onrender.com/api/idea/audio`
+
+**Request**: POST with audio file (WebM format, max 10MB)
+
+**Response**:
+```json
+{
+  "category": "VISIONARY" | "DELUSIONAL",
+  "feedback": "string"
+}
+```
+
+## Development
+
+```bash
+# Run linter
+npm run lint
+
+# Type check
+npm run build  # TypeScript compilation is part of build
+```
+
+## Video Assets
+
+Character animations are WebM videos with transparency:
+- `idle.webm` - Looping idle animation
+- `listening.webm` - Recording state animation
+- `impressed.webm` - Positive verdict animation
+- `disappointed.webm` - Negative verdict animation
+
+### Converting Assets
+
+Use ffmpeg to convert GIFs or videos to WebM:
+
+```bash
+ffmpeg -i input.gif -c:v libvpx-vp9 -pix_fmt yuva420p -b:v 0 -crf 30 output.webm
+```
+
+## License
+
+MIT
