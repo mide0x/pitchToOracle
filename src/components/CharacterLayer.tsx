@@ -41,12 +41,7 @@ export const CharacterLayer = ({
     );
   }, []);
   const [useHevc, setUseHevc] = useState(isIOS);
-  // Always use canvas chroma-key on mobile to remove white backgrounds
-  const isMobile = useMemo(() => {
-    if (typeof navigator === "undefined") return false;
-    return /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent);
-  }, []);
-  const useCanvasChromaKey = isMobile || (isIOS && !useHevc);
+  const useCanvasChromaKey = isIOS && !useHevc;
 
   const getVideoSrc = () => {
     switch (status) {
