@@ -1,0 +1,9 @@
+@import "tailwindcss";
+
+@theme {
+  --font-serif: "Playfair Display", serif;
+  
+  --color-gold-100: #F9F1D8;
+  --color-gold-400: #D4AF37;
+  --color-cream: #F5F0E6;
+}
