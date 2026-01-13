@@ -104,6 +104,7 @@ export const CharacterLayer = ({
           onTimeUpdate={handleTimeUpdate}
           onEnded={onVideoEnd}
           className="h-full w-auto max-h-[85vh] object-contain translate-y-[5%]"
+          style={{ background: 'transparent' }}
         />
       </motion.div>
 

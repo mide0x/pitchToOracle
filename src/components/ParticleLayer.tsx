@@ -18,6 +18,10 @@ export const ParticleLayer = () => {
 
     const options: ISourceOptions = {
         fullScreen: { enable: false },
+        background: {
+            color: "transparent",
+            opacity: 0
+        },
         fpsLimit: 120,
         particles: {
             number: {
@@ -75,10 +79,11 @@ export const ParticleLayer = () => {
 
     return (
         <div className="absolute inset-0 z-10 pointer-events-none">
-            <Particles 
-                id="tsparticles" 
+            <Particles
+                id="tsparticles"
                 className="w-full h-full"
-                options={options} 
+                options={options}
+                style={{ background: 'transparent' }}
             />
         </div>
     );

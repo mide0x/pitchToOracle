@@ -21,3 +21,18 @@ body {
   height: 100%;
   background-color: #000000;
 }
+
+/* Force canvas transparency */
+canvas {
+  background: transparent !important;
+}
+
+/* Ensure video elements are transparent */
+video {
+  background: transparent !important;
+}
+
+/* Ensure tsparticles container is transparent */
+#tsparticles {
+  background: transparent !important;
+}
