@@ -40,8 +40,9 @@ export const VisionPage = () => {
     const result = await getVerdict(audioBlob);
 
     // Determine category based on message content
-    const isVisionary = result.message.toLowerCase().includes("visionary") &&
-                        !result.message.toLowerCase().includes("not a visionary");
+    const isVisionary =
+      result.message.toLowerCase().includes("visionary") &&
+      !result.message.toLowerCase().includes("not a visionary");
 
     setVerdict({
       category: isVisionary ? "VISIONARY" : "DELUSIONAL",
@@ -69,7 +70,7 @@ export const VisionPage = () => {
       {/* Desktop Background */}
       <div className="absolute inset-0 z-0 opacity-50 bg-[radial-gradient(circle_at_center,_#2a1f4e_0%,_#000000_100%)] blur-3xl scale-125 pointer-events-none" />
 
-      {/* Mobile Container / Card on Web */}
+      {/* Mobile Container. this will display as a mini card on Web */}
       <main className="relative w-full md:max-w-[480px] h-full md:h-auto md:aspect-[9/19] md:max-h-[90vh] flex flex-col items-center overflow-hidden font-serif selection:bg-purple-900 selection:text-white shadow-2xl bg-[#020204] md:rounded-[40px] md:border md:border-white/5 transition-all duration-300">
         <BackgroundLayer />
         <ParticleLayer />
@@ -180,13 +181,16 @@ async function getVerdict(audioBlob: Blob) {
 
     console.log("Sending audio to backend, size:", audioBlob.size, "bytes");
 
-    const response = await fetch("https://is-api-jywq.onrender.com/api/idea/audio", {
-      method: "POST",
-      body: audioBlob,
-      headers: {
-        "Content-Type": "audio/webm",
-      },
-    });
+    const response = await fetch(
+      "https://is-api-jywq.onrender.com/api/idea/audio",
+      {
+        method: "POST",
+        body: audioBlob,
+        headers: {
+          "Content-Type": "audio/webm",
+        },
+      }
+    );
 
     if (!response.ok) {
       throw new Error(`API error: ${response.status} ${response.statusText}`);

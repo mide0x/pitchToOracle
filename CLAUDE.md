@@ -41,11 +41,13 @@ VisionPage (state manager)
 ### Character Animation System
 
 The `CharacterLayer` component manages video playback based on status:
+
 - **idle**: loops idle.webm
 - **listening/processing**: plays listening.webm (shared video for both states)
 - **result**: plays impressed.webm or disappointed.webm (one-shot)
 
 **Critical timing logic:**
+
 - Result videos trigger `onShowVerdict()` callback 3 seconds before video end
 - Audio files (MP3) play in sync with result videos
 - Video key stabilization prevents remounting between listening→processing transition
@@ -53,6 +55,7 @@ The `CharacterLayer` component manages video playback based on status:
 ### Audio Recording
 
 `useAudioRecorder` hook:
+
 - Records audio as WebM format (audio/webm)
 - Returns Blob on `stopRecording()`
 - Automatically releases microphone resources
@@ -61,35 +64,39 @@ The `CharacterLayer` component manages video playback based on status:
 
 API endpoint: `https://is-api-jywq.onrender.com/api/idea/audio`
 
-**Development proxy configuration:**
-- Vite proxy redirects `/api/*` to the backend (vite.config.ts:8-14)
-- This bypasses CORS issues in development
+**Development configuration:**
+
 - Audio must be <10MB (validated in `getVerdict()`)
 
 **Expected response shape:**
+
 ```typescript
 {
-  category: "VISIONARY" | "DELUSIONAL"
-  feedback: string
-  // Note: Backend may return additional fields
+  category: "VISIONARY" | "DELUSIONAL";
+  feedback: string;
+  // backend may return additional fields
 }
 ```
 
 ### Asset Management
 
 Video assets (WebM):
+
 - `idle.webm`, `listening.webm`, `impressed.webm`, `disappointed.webm`
 - Located in `src/assets/`
 
 Audio assets (MP3):
+
 - Verdict audio files in subdirectories (`impressed_animation/`, `not_impressed_animation/`)
 - Played via Audio API, not video soundtrack
 
 Image assets:
+
 - `scroll.png` - Used in VerdictPopup as backdrop for verdict text
 
 **Converting assets:**
 Use ffmpeg for video conversions (ffmpeg is installed):
+
 ```bash
 ffmpeg -i input.gif -c:v libvpx-vp9 -pix_fmt yuva420p -b:v 0 -crf 30 output.webm
 ```

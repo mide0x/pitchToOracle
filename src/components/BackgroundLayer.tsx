@@ -10,8 +10,6 @@ export const BackgroundLayer = () => {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-
     const render = () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;

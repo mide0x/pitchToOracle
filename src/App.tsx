@@ -1,11 +1,7 @@
-
-
-import { VisionPage } from './components/VisionPage'
+import { VisionPage } from "./components/VisionPage";
 
 function App() {
-  return (
-    <VisionPage />
-  )
+  return <VisionPage />;
 }
 
-export default App
+export default App;

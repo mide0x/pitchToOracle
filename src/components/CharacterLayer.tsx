@@ -182,7 +182,10 @@ export const CharacterLayer = ({
     const data = frame.data;
 
     let hasAlpha = false;
-    const step = Math.max(1, Math.floor(Math.min(videoWidth, videoHeight) / 60));
+    const step = Math.max(
+      1,
+      Math.floor(Math.min(videoWidth, videoHeight) / 60)
+    );
     for (let y = 0; y < videoHeight; y += step) {
       for (let x = 0; x < videoWidth; x += step) {
         const idx = (y * videoWidth + x) * 4 + 3;
@@ -194,7 +197,11 @@ export const CharacterLayer = ({
       if (hasAlpha) break;
     }
 
-    const offset = Math.min(2, Math.floor(videoWidth / 50), Math.floor(videoHeight / 50));
+    const offset = Math.min(
+      2,
+      Math.floor(videoWidth / 50),
+      Math.floor(videoHeight / 50)
+    );
     const cornerPoints: Array<[number, number]> = [
       [offset, offset],
       [videoWidth - 1 - offset, offset],
