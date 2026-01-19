@@ -1,16 +1,17 @@
 import { motion, AnimatePresence } from "framer-motion";
 import scrollImage from "../assets/scroll.png";
+import type { VerdictType } from "../services/verdictApi";
 
 interface VerdictPopupProps {
   isVisible: boolean;
-  category: "VISIONARY" | "DELUSIONAL";
+  verdictType: VerdictType;
   feedback: string;
   onClose?: () => void;
 }
 
 export const VerdictPopup = ({
   isVisible,
-  category,
+  verdictType,
   feedback,
   onClose,
 }: VerdictPopupProps) => {
@@ -54,13 +55,13 @@ export const VerdictPopup = ({
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.3 }}
                   className={`text-xl md:text-2xl font-bold font-serif tracking-wide ${
-                    category === "VISIONARY"
+                    verdictType === "VISIONARY"
                       ? "text-[#8B4513]"
                       : "text-[#4A4A4A]"
                   }`}
                   style={{ textShadow: "0 1px 2px rgba(255,255,255,0.5)" }}
                 >
-                  {category}
+                  {verdictType}
                 </motion.h2>
 
                 <motion.p

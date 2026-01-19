@@ -1,4 +1,11 @@
-async function getVerdict(audioBlob: Blob) {
+export type VerdictType = "VISIONARY" | "DELUSIONAL";
+
+export interface Verdict {
+    type: VerdictType;
+    message: string;
+}
+
+async function getVerdict(audioBlob: Blob): Promise<Verdict> {
     try {
         // Check if audio is below 10MB
         const maxSize = 10 * 1024 * 1024;
@@ -26,20 +33,24 @@ async function getVerdict(audioBlob: Blob) {
             );
         }
 
+        // TODO should be standard on what the api returns
+        // for now, a boolean flag, `success`
+        // and the verdict, `message`
+        // seems like the final report requires a header, currently, it's visionary or delusional
+        // i'd tweak the api to return a header too..
         const data = await response.json();
         console.log("Backend response:", data);
 
-        return data;
+        return {
+            type: "VISIONARY", // TODO remove this after tweaking API
+            message: data.message,
+        };
     } catch (error) {
         console.error("Error calling verdict API:", error);
-        // Fallback to mock response on error
-        const isImpressed = Math.random() > 0.5;
+
         return {
-            impressed: isImpressed,
-            category: isImpressed ? "VISIONARY" : "DELUSIONAL",
-            feedback: isImpressed
-                ? "This could actually work. The oracle is intrigued."
-                : "The oracle has seen a thousand of these fail.",
+            type: "VISIONARY", // TODO remove this after tweaking API
+            message: "i'm not feeling well today",
         };
     }
 }

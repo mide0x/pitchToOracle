@@ -8,6 +8,8 @@ import disappointedVideo from "../assets/disappointed.webm";
 // Audio imports
 import impressedAudio from "../assets/impressed_animation/0109(2).MP3";
 import disappointedAudio from "../assets/not_impressed_animation/0109(3).MP3";
+import type {  VerdictType } from "../services/verdictApi";
+import type { OracleStatus } from "../types/OracleStatus";
 
 const IOS_VIDEO_SOURCES = {
   idle: "/ios/idle.hevc.mov",
@@ -17,15 +19,15 @@ const IOS_VIDEO_SOURCES = {
 };
 
 interface CharacterLayerProps {
-  status: "idle" | "listening" | "processing" | "result";
-  verdict?: "VISIONARY" | "DELUSIONAL";
+  oracleStatus: OracleStatus;
+  verdictType?: VerdictType;
   onVideoEnd: () => void;
   onShowVerdict: () => void;
 }
 
 export const CharacterLayer = ({
-  status,
-  verdict,
+  oracleStatus,
+  verdictType,
   onVideoEnd,
   onShowVerdict,
 }: CharacterLayerProps) => {
@@ -44,12 +46,12 @@ export const CharacterLayer = ({
   const useCanvasChromaKey = isIOS && !useHevc;
 
   const getVideoSrc = () => {
-    switch (status) {
+    switch (oracleStatus) {
       case "listening":
       case "processing":
         return useHevc ? IOS_VIDEO_SOURCES.listening : listeningVideo;
       case "result":
-        if (verdict === "VISIONARY") {
+        if (verdictType === "VISIONARY") {
           return useHevc ? IOS_VIDEO_SOURCES.impressed : impressedVideo;
         }
         return useHevc ? IOS_VIDEO_SOURCES.disappointed : disappointedVideo;
@@ -61,9 +63,9 @@ export const CharacterLayer = ({
 
   // Stable key to prevent remounting between listening and processing
   const getVideoKey = () => {
-    if (status === "listening" || status === "processing")
+    if (oracleStatus === "listening" || oracleStatus === "processing")
       return `listening-processing-group-${useHevc ? "hevc" : "webm"}`;
-    return `${status}-${useHevc ? "hevc" : "webm"}`;
+    return `${oracleStatus}-${useHevc ? "hevc" : "webm"}`;
   };
 
   useEffect(() => {
@@ -80,9 +82,9 @@ export const CharacterLayer = ({
 
   // Handle audio playback
   useEffect(() => {
-    if (status === "result" && verdict) {
+    if (oracleStatus === "result" && verdictType) {
       const audioSrc =
-        verdict === "VISIONARY" ? impressedAudio : disappointedAudio;
+        verdictType === "VISIONARY" ? impressedAudio : disappointedAudio;
       const audio = new Audio(audioSrc);
       audioRef.current = audio;
       audio.play().catch((e) => console.log("Audio play failed", e));
@@ -99,7 +101,7 @@ export const CharacterLayer = ({
         audioRef.current.pause();
       }
     };
-  }, [status, verdict]);
+  }, [oracleStatus, verdictType]);
 
   useEffect(() => {
     if (!useCanvasChromaKey) return;
@@ -151,10 +153,10 @@ export const CharacterLayer = ({
     return () => {
       cancelAnimationFrame(animationFrame);
     };
-  }, [useCanvasChromaKey, status, verdict]);
+  }, [useCanvasChromaKey, oracleStatus, verdictType]);
 
   const handleTimeUpdate = () => {
-    if (status === "result" && videoRef.current) {
+    if (oracleStatus === "result" && videoRef.current) {
       const timeLeft = videoRef.current.duration - videoRef.current.currentTime;
       // Trigger popup 3 seconds before end (or immediately if video is short)
       if (timeLeft <= 3 && timeLeft > 2.8) {
@@ -235,7 +237,7 @@ export const CharacterLayer = ({
         className="relative w-full h-[90%] flex items-center justify-center cursor-pointer touch-none"
         animate={{
           filter:
-            status === "listening"
+            oracleStatus === "listening"
               ? "drop-shadow(0 0 20px rgba(164,138,255,0.4))"
               : "drop-shadow(0 0 30px rgba(164,138,255,0.1))",
         }}
@@ -245,7 +247,7 @@ export const CharacterLayer = ({
           key={getVideoKey()}
           src={getVideoSrc()}
           autoPlay
-          loop={status === "idle"}
+          loop={oracleStatus === "idle"}
           muted
           playsInline
           onTimeUpdate={handleTimeUpdate}
@@ -269,11 +271,11 @@ export const CharacterLayer = ({
       <motion.p
         initial={{ opacity: 0 }}
         animate={{
-          opacity: status === "idle" ? 0.6 : status === "processing" ? 0.8 : 0,
+          opacity: oracleStatus === "idle" ? 0.6 : oracleStatus === "processing" ? 0.8 : 0,
         }}
         className="absolute bottom-[5%] text-cream/60 font-serif italic text-sm tracking-wide pointer-events-none z-20"
       >
-        {status === "processing"
+        {oracleStatus === "processing"
           ? "The oracle is thinking..."
           : "Tap character to speak"}
       </motion.p>

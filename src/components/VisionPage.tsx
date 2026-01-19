@@ -5,18 +5,13 @@ import { ParticleLayer } from "./ParticleLayer";
 import { CharacterLayer } from "./CharacterLayer";
 import { VerdictPopup } from "./VerdictPopup";
 import { useAudioRecorder } from "../hooks/useAudioRecorder";
-import getVerdict from "../services/verdictApi";
+import getVerdict, { type Verdict } from "../services/verdictApi";
+import type { OracleStatus } from "../types/OracleStatus";
 
-type Status = "idle" | "listening" | "processing" | "result";
-
-interface VerdictData {
-  category: "VISIONARY" | "DELUSIONAL";
-  feedback: string;
-}
 
 export const VisionPage = () => {
-  const [status, setStatus] = useState<Status>("idle");
-  const [verdict, setVerdict] = useState<VerdictData | null>(null);
+  const [status, setStatus] = useState<OracleStatus>("idle");
+  const [verdict, setVerdict] = useState< Verdict | null>(null);
   const [showResultPopup, setShowResultPopup] = useState(false);
   const { startRecording, stopRecording } = useAudioRecorder();
 
@@ -38,17 +33,9 @@ export const VisionPage = () => {
       type: audioBlob.type,
     });
 
-    const result = await getVerdict(audioBlob);
+    const verdict = await getVerdict(audioBlob);
 
-    // Determine category based on message content
-    const isVisionary =
-      result.message.toLowerCase().includes("visionary") &&
-      !result.message.toLowerCase().includes("not a visionary");
-
-    setVerdict({
-      category: isVisionary ? "VISIONARY" : "DELUSIONAL",
-      feedback: result.message,
-    });
+    setVerdict(verdict);
     setStatus("result");
   };
 
@@ -104,8 +91,8 @@ export const VisionPage = () => {
           whileTap={status === "idle" ? { scale: 0.98 } : {}}
         >
           <CharacterLayer
-            status={status}
-            verdict={verdict?.category}
+            oracleStatus={status}
+            verdictType={verdict?.type}
             onVideoEnd={handleVideoEnd}
             onShowVerdict={handleShowVerdict}
           />
@@ -160,8 +147,8 @@ export const VisionPage = () => {
 
           <VerdictPopup
             isVisible={showResultPopup}
-            category={verdict?.category || "DELUSIONAL"}
-            feedback={verdict?.feedback || ""}
+            verdictType={verdict?.type || "DELUSIONAL"}
+            feedback={verdict?.message || ""}
             onClose={resetFlow}
           />
         </div>

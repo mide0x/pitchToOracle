@@ -1,14 +1,15 @@
 import { motion, AnimatePresence } from "framer-motion";
+import type { VerdictType } from "../services/verdictApi";
 
 interface VerdictOverlayProps {
   isVisible: boolean;
-  category: "VISIONARY" | "DELUSIONAL";
+  verdictType: VerdictType;
   feedback: string;
 }
 
 export const VerdictOverlay = ({
   isVisible,
-  category,
+  verdictType,
   feedback,
 }: VerdictOverlayProps) => {
   return (
@@ -26,11 +27,11 @@ export const VerdictOverlay = ({
             animate={{ opacity: 1, letterSpacing: "0.05em" }}
             transition={{ delay: 0.2, duration: 1 }}
             className={`text-4xl md:text-5xl font-bold tracking-tight text-center drop-shadow-[0_0_30px_rgba(255,255,255,0.3)] ${
-              category === "VISIONARY" ? "text-amber-100" : "text-gray-300"
+              verdictType === "VISIONARY" ? "text-amber-100" : "text-gray-300"
             }`}
             style={{ fontFamily: "'Playfair Display', serif" }}
           >
-            {category}
+            {verdictType}
           </motion.h2>
 
           <motion.p
