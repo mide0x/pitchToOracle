@@ -123,9 +123,9 @@ export const VisionPage = () => {
                   transition={{ duration: 0.5 }}
                 >
                   <h1 className="text-4xl md:text-5xl font-serif font-medium leading-[1.15] text-cream tracking-wide drop-shadow-2xl">
-                    Speak your vision
+                    Pitch your idea
                     <br />
-                    <span className="italic block mt-1">into existence</span>
+                    <span className="italic block mt-1">The oracle decides</span>
                   </h1>
                 </motion.div>
               </header>
