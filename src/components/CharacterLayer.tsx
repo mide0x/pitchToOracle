@@ -1,4 +1,4 @@
-import { useRef, useEffect, useMemo, useState } from "react";
+import { useRef, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import idleVideo from "../assets/idle.webm";
 import listeningVideo from "../assets/listening.webm";
@@ -18,6 +18,11 @@ const IOS_VIDEO_SOURCES = {
   disappointed: "/ios/disappointed.hevc.mov",
 };
 
+const isIOS =
+    typeof navigator !== "undefined" &&
+    (/iPad|iPhone|iPod/.test(navigator.userAgent || "") ||
+    (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1));
+
 interface CharacterLayerProps {
   oracleStatus: OracleStatus;
   verdictType?: VerdictType;
@@ -34,15 +39,19 @@ export const CharacterLayer = ({
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const isIOS = useMemo(() => {
-    if (typeof navigator === "undefined") return false;
-    const ua = navigator.userAgent || "";
-    return (
-      /iPad|iPhone|iPod/.test(ua) ||
-      (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1)
-    );
-  }, []);
-  const [useHevc, setUseHevc] = useState(isIOS);
+
+  const [useHevc, setUseHevc] = useState(() => {
+    if (!isIOS) return false;
+
+    const probeVideo = document.createElement("video");
+    const canPlay =
+      probeVideo.canPlayType('video/mp4; codecs="hvc1"') ||
+      probeVideo.canPlayType('video/mp4; codecs="hev1"') ||
+      probeVideo.canPlayType('video/quicktime; codecs="hvc1"');
+
+    return !!canPlay;
+  });
+
   const useCanvasChromaKey = isIOS && !useHevc;
 
   const getVideoSrc = () => {
@@ -68,17 +77,6 @@ export const CharacterLayer = ({
     return `${oracleStatus}-${useHevc ? "hevc" : "webm"}`;
   };
 
-  useEffect(() => {
-    if (!isIOS) return;
-    const probeVideo = document.createElement("video");
-    const canPlay =
-      probeVideo.canPlayType('video/mp4; codecs="hvc1"') ||
-      probeVideo.canPlayType('video/mp4; codecs="hev1"') ||
-      probeVideo.canPlayType('video/quicktime; codecs="hvc1"');
-    if (!canPlay) {
-      setUseHevc(false);
-    }
-  }, [isIOS]);
 
   // Handle audio playback
   useEffect(() => {
