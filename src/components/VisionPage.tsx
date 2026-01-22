@@ -9,6 +9,9 @@ import getVerdict, { type Verdict } from "../services/verdictApi";
 import type { OracleStatus } from "../types/OracleStatus";
 
 
+// TODO `fix the delay.. between sending voice note and result..
+// the animation should play immediately i'm done speaking..`
+
 export const VisionPage = () => {
   const [status, setStatus] = useState<OracleStatus>("idle");
   const [verdict, setVerdict] = useState< Verdict | null>(null);
@@ -33,6 +36,8 @@ export const VisionPage = () => {
       type: audioBlob.type,
     });
 
+    // TODO, verdict is null when an error occurs
+    // the UI should handle this
     const verdict = await getVerdict(audioBlob);
 
     setVerdict(verdict);
@@ -116,6 +121,7 @@ export const VisionPage = () => {
                     <span className="italic block mt-1">The oracle decides</span>
                   </h1>
                 </motion.div>
+                {/* TODO a mic icon here is more intuitive.. */}
               </header>
             )}
           </AnimatePresence>

@@ -1,11 +1,31 @@
-export type VerdictType = "VISIONARY" | "DELUSIONAL";
+/**
+ * 
+ * VISIONARY and DELUSIONAL describe the quality of the user's idea.
+ * 
+ * GARBAGE handles cases where user doesn't follow instructions:
+ * - blank/silent recordings
+ * - unrelated rambling
+ * - forgot they started recording
+ * - any input that isn't a startup idea
+ */
+export type VerdictType = "VISIONARY" | "DELUSIONAL" | "GARBAGE";
 
 export interface Verdict {
     type: VerdictType;
     message: string;
 }
 
-async function getVerdict(audioBlob: Blob): Promise<Verdict> {
+// if api interface changes, this should change accordingly
+interface VerdictApiResponse {
+    success: boolean,
+    debug?: object,
+    transcriptionResult?: {
+        verdictType: VerdictType | null,
+        verdictText: string | null
+    };
+}
+
+async function getVerdict(audioBlob: Blob): Promise<Verdict | null> {
     try {
         // Check if audio is below 10MB
         const maxSize = 10 * 1024 * 1024;
@@ -33,25 +53,29 @@ async function getVerdict(audioBlob: Blob): Promise<Verdict> {
             );
         }
 
-        // TODO should be standard on what the api returns
-        // for now, a boolean flag, `success`
-        // and the verdict, `message`
-        // seems like the final report requires a header, currently, it's visionary or delusional
-        // i'd tweak the api to return a header too..
-        const data = await response.json();
+        const data: VerdictApiResponse = await response.json();
         console.log("Backend response:", data);
 
+        const { transcriptionResult } = data;
+
+        if (
+            !transcriptionResult || 
+            !transcriptionResult.verdictText || 
+            !transcriptionResult.verdictType
+        ) {
+            throw new Error(
+                `error occurred, see: ${data.debug}`
+            )
+        }
+
         return {
-            type: "VISIONARY", // TODO remove this after tweaking API
-            message: data.message,
+            type: transcriptionResult.verdictType,
+            message: transcriptionResult.verdictText,
         };
     } catch (error) {
         console.error("Error calling verdict API:", error);
 
-        return {
-            type: "VISIONARY", // TODO remove this after tweaking API
-            message: "i'm not feeling well today",
-        };
+        return null;
     }
 }
 
