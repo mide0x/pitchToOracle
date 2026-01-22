@@ -118,10 +118,9 @@ export const VisionPage = () => {
                   <h1 className="text-4xl md:text-5xl font-serif font-medium leading-[1.15] text-cream tracking-wide drop-shadow-2xl">
                     Pitch your idea
                     <br />
-                    <span className="italic block mt-1">The oracle decides</span>
+                    <span className="italic block mt-1">I decide</span>
                   </h1>
                 </motion.div>
-                {/* TODO a mic icon here is more intuitive.. */}
               </header>
             )}
           </AnimatePresence>
@@ -136,7 +135,7 @@ export const VisionPage = () => {
                 className="absolute top-[15%] z-30 flex flex-col items-center gap-4 pointer-events-auto"
               >
                 <p className="text-white/80 font-serif italic tracking-wide animate-pulse">
-                  Listening...
+                  i'm listening...
                 </p>
                 <button
                   onClick={(e) => {
@@ -145,7 +144,7 @@ export const VisionPage = () => {
                   }}
                   className="px-6 py-2 rounded-full border border-white/20 bg-white/10 backdrop-blur-md text-white font-medium hover:bg-white/20 transition-all active:scale-95"
                 >
-                  Done Speaking
+                  Finish
                 </button>
               </motion.div>
             )}

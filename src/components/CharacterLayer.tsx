@@ -4,6 +4,7 @@ import idleVideo from "../assets/idle.webm";
 import listeningVideo from "../assets/listening.webm";
 import impressedVideo from "../assets/impressed.webm";
 import disappointedVideo from "../assets/disappointed.webm";
+import mic_icon from "../assets/ic_mic.svg";
 
 // Audio imports
 import impressedAudio from "../assets/impressed_animation/0109(2).MP3";
@@ -30,6 +31,9 @@ interface CharacterLayerProps {
     onShowVerdict: () => void;
 }
 
+// FIXME the Oracle isn't centered, possibly inherent in the video..
+// this shifts the oracle leftwards. 
+const oracleOffsetMod = "-translate-x-5";
 export const CharacterLayer = ({
     oracleStatus,
     verdictType,
@@ -246,9 +250,21 @@ export const CharacterLayer = ({
             {/* Grounding Shadow */}
             <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[120%] h-[30%] bg-[radial-gradient(closest-side,rgba(0,0,0,0.8)_20%,transparent_100%)] blur-xl pointer-events-none mix-blend-multiply" />
 
+            {oracleStatus === 'idle' &&             
+                <motion.div
+                    className="absolute top-[28%] text-cream/50 font-serif italic text-sm tracking-wide pointer-events-none z-20 animate-pulse"
+                    animate={{
+                        opacity: oracleStatus === "idle" ? 0.6 : 0,
+                    }}
+                    transition={{ duration: 0.3 }}
+                >
+                    <img src={mic_icon} alt="microphone" className="w-13"/>
+                </motion.div>
+            }
+
             {/* Interactive Character Video */}
             <motion.div
-                className="relative w-full h-[90%] flex items-center justify-center cursor-pointer touch-none"
+                className={`relative w-full h-[90%] flex items-center justify-center cursor-pointer touch-none ${oracleOffsetMod}`}
                 animate={{
                     filter:
                         oracleStatus === "listening"
@@ -283,23 +299,18 @@ export const CharacterLayer = ({
                 )}
             </motion.div>
 
-            {/* Hint Text */}
-            <motion.p
-                initial={{ opacity: 0 }}
-                animate={{
-                    opacity:
-                        oracleStatus === "idle"
-                            ? 0.6
-                            : oracleStatus === "processing"
-                            ? 0.8
-                            : 0,
-                }}
-                className="absolute bottom-[5%] text-cream/60 font-serif italic text-sm tracking-wide pointer-events-none z-20"
-            >
-                {oracleStatus === "processing"
-                    ? "The oracle is thinking..."
-                    : "Tap character to speak"}
-            </motion.p>
+
+            {oracleStatus === 'processing' &&             
+                <motion.p
+                    initial={{ opacity: 0 }}
+                    animate={{
+                        opacity: 0.8,
+                    }}
+                    className="absolute top-[25%] text-cream/60 font-serif italic text-lg tracking-wide pointer-events-none z-20 animate-pulse"
+                >
+                    let me think...
+                </motion.p>
+            }
         </div>
     );
 };
