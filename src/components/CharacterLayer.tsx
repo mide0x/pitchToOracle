@@ -8,7 +8,7 @@ import disappointedVideo from "../assets/disappointed.webm";
 // Audio imports
 import impressedAudio from "../assets/impressed_animation/0109(2).MP3";
 import disappointedAudio from "../assets/not_impressed_animation/0109(3).MP3";
-import type { IdeaVerdict } from "../services/verdictApi";
+import type { VerdictType } from "../services/verdictApi";
 import type { OracleStatus } from "../types/OracleStatus";
 
 const IOS_VIDEO_SOURCES = {
@@ -25,7 +25,7 @@ const isIOS =
 
 interface CharacterLayerProps {
     oracleStatus: OracleStatus;
-    verdictType?: IdeaVerdict;
+    verdictType?: VerdictType;
     onVideoEnd: () => void;
     onShowVerdict: () => void;
 }

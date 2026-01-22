@@ -1,10 +1,10 @@
 import { motion, AnimatePresence } from "framer-motion";
 import scrollImage from "../assets/scroll.png";
-import type { IdeaVerdict } from "../services/verdictApi";
+import type { VerdictType } from "../services/verdictApi";
 
 interface VerdictPopupProps {
     isVisible: boolean;
-    verdictType: IdeaVerdict;
+    verdictType: VerdictType;
     feedback: string;
     onClose?: () => void;
 }

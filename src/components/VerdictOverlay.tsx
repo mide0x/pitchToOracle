@@ -1,9 +1,9 @@
 import { motion, AnimatePresence } from "framer-motion";
-import type { IdeaVerdict } from "../services/verdictApi";
+import type { VerdictType } from "../services/verdictApi";
 
 interface VerdictOverlayProps {
     isVisible: boolean;
-    verdictType: IdeaVerdict;
+    verdictType: VerdictType;
     feedback: string;
 }
 
