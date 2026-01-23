@@ -4,7 +4,6 @@ import idleVideo from "../assets/idle.webm";
 import listeningVideo from "../assets/listening.webm";
 import impressedVideo from "../assets/impressed.webm";
 import disappointedVideo from "../assets/disappointed.webm";
-import mic_icon from "../assets/ic_mic.svg";
 
 // Audio imports
 import impressedAudio from "../assets/impressed_animation/0109(2).MP3";
@@ -252,13 +251,13 @@ export const CharacterLayer = ({
 
             {oracleStatus === 'idle' &&             
                 <motion.div
-                    className="absolute top-[28%] text-cream/50 font-serif italic text-sm tracking-wide pointer-events-none z-20 animate-pulse"
+                    className="absolute top-[32%] text-cream/50 font-serif text-lg tracking-wide pointer-events-none z-20 animate-pulse"
                     animate={{
                         opacity: oracleStatus === "idle" ? 0.6 : 0,
                     }}
                     transition={{ duration: 0.3 }}
                 >
-                    <img src={mic_icon} alt="microphone" className="w-13"/>
+                    <p>tap to speak</p>
                 </motion.div>
             }
 
