@@ -251,7 +251,7 @@ export const CharacterLayer = ({
 
             {oracleStatus === 'idle' &&             
                 <motion.div
-                    className="absolute top-[32%] text-cream/50 font-serif text-lg tracking-wide pointer-events-none z-20 animate-pulse"
+                    className="absolute top-[32%] text-cream/50 font-serif text-2xl tracking-wide pointer-events-none z-20 animate-pulse"
                     animate={{
                         opacity: oracleStatus === "idle" ? 0.8 : 0,
                     }}
@@ -305,7 +305,7 @@ export const CharacterLayer = ({
                     animate={{
                         opacity: 0.8,
                     }}
-                    className="absolute top-[25%] text-cream/60 font-serif italic text-lg tracking-wide pointer-events-none z-20 animate-pulse"
+                    className="absolute top-[25%] text-cream/60 font-serif italic text-2xl tracking-wide pointer-events-none z-20 animate-pulse"
                 >
                     let me think...
                 </motion.p>
